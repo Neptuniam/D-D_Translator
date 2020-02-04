@@ -201,6 +201,7 @@ export default {
         border-radius: 5px;
         padding: 15px 30px;
         margin: 0px;
+        background-color: white;
     }
 
 
