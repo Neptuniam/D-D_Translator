@@ -1,12 +1,12 @@
 <template>
 <div class="App">
     <div class="center-xs Intro">
-        <h1>English to Bou Translator</h1>
+        <h1>English to BOAA Translator</h1>
         <h3>Built By: Liam Jones</h3>
     </div>
 
     <div class="Forwards row around-xs middle-xs fullWidth">
-        <div class="col-xs-12 col-md-5">
+        <div class="col-xs-12 col-md-5 limitReadable">
             <b>English</b>
             <textarea class="uk-textarea fullWidth" v-model="english" rows="4" placeholder="Enter some text here">
             </textarea>
@@ -18,8 +18,12 @@
             <button type="button" class="uk-button-primary" @click="translate('en')" uk-icon="icon: chevron-left; ratio: 2" /> -->
         </div>
 
-        <div class="col-xs-12 col-md-5">
-            <b>Bou</b>
+        <div class="col-xs-12 col-md-5 limitReadable">
+            <b>BOAA</b>
+
+            <span v-if="translated" class="copyToClip clickable" v-clipboard="() => translated"
+                  uk-icon="icon: move; ratio:0.75;" uk-tooltip="Copy to Clipboard" />
+
             <textarea class="uk-textarea fullWidth" v-model="translated" rows="4" placeholder="Bou translated text will appear here">
             </textarea>
         </div>
@@ -27,9 +31,9 @@
 
     <div v-if="history && history.length" class="row fullWidth center-xs ">
         <div class="col-xs-6 start-xs history">
-            <b>History</b>
+            <b>Recent Translations</b>
             <ul>
-                <li v-for="item in history" :key="item.timestamp">
+                <li v-for="item in history" :key="item.english+item.timestamp.getHours()">
                     (<b>{{item.timestamp.getHours()}}: {{item.timestamp.getMinutes()}}</b>) {{item.english}} - {{item.bou}}
                 </li>
             </ul>
@@ -139,7 +143,7 @@ export default {
             // Put the sentence back together
             this.translated = ""
             for (let word of list)
-                this.translated += word + " "
+                this.translated += word.toUpperCase() + " "
         },
 
         translate(languageCode) {
@@ -165,8 +169,10 @@ export default {
 
     .App {
         background-image: url('assets/shattered.png');
-        height: 100vh;
-        width: 100vw;
+        min-height: 100vh;
+        height: 100%;
+        min-width: 100vw;
+        width: 100%;
     }
 
     .Intro {
@@ -183,24 +189,28 @@ export default {
         font-size: 14px;
     }
 
+    .copyToClip {
+        margin-left: 10px;
+    }
+
     .col-xs-1 {
         margin: 30px 0px;
     }
 
-    button {
+    textarea, button {
         border-radius: 5px !important;
         padding: 1px 10px;
     }
 
     .history {
-        margin-top: 50px;
-
+        margin-top: 75px;
     }
     .history ul {
         border: 1px black solid;
         border-radius: 5px;
         padding: 15px 30px;
         margin: 0px;
+        background-color: white;
     }
 
 
@@ -209,5 +219,11 @@ export default {
     }
     .fullHeight {
         height: 100%;
+    }
+    .clickable {
+        cursor: pointer;
+    }
+    .limitReadable {
+        max-width: 800px;
     }
 </style>
