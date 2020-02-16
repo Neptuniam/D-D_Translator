@@ -47,7 +47,8 @@
 export default {
     data() {
         return {
-            url: 'https://translation.googleapis.com/language/translate/v2?key=AIzaSyBfBIucwY9Ho4csB3doxTabceqor52-B0c',
+            url: 'https://translation.googleapis.com/language/translate/v2?key',
+            apiKey: null,
             english: null,
             translated: null,
             history: [],
@@ -86,10 +87,10 @@ export default {
 
 
         toAfrican(english) {
-            return this.axios.get(`${this.url}&q=${english}&target=afr`)
+            return this.axios.get(`${this.url}=${this.apiKey}&q=${english}&target=afr`)
         },
         toEnglish() {
-            return this.axios.get(`${this.url}&q=${this.translated}&target=en`)
+            return this.axios.get(`${this.url}=${this.apiKey}&q=${this.translated}&target=en`)
         },
 
         processWord(word, vowels) {
@@ -147,11 +148,22 @@ export default {
         },
 
         translate(languageCode) {
-            if (languageCode == 'af' && this.english) {
-                this.forwards(this.english)
-            } else {
-                this.toEnglish()
+            if (this.apiKey) {
+                if (languageCode == 'af' && this.english) {
+                    this.forwards(this.english)
+                } else {
+                    this.toEnglish()
+                }
             }
+        }
+    },
+
+    async mounted() {
+        this.apiKey = await localStorage.getItem("DD-GoogleTranslate-APIKEY")
+
+        if (!this.apiKey) {
+            this.apiKey = prompt("Please enter a valid google translate api token")
+            localStorage.setItem("DD-GoogleTranslate-APIKEY", this.apiKey)
         }
     },
 }
