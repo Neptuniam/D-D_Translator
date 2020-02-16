@@ -24,7 +24,7 @@
             <span v-if="translated" class="copyToClip clickable" v-clipboard="() => translated"
                   uk-icon="icon: move; ratio:0.75;" uk-tooltip="Copy to Clipboard" />
 
-            <textarea class="uk-textarea fullWidth" v-model="translated" rows="4" placeholder="Bou translated text will appear here">
+            <textarea class="uk-textarea fullWidth" v-model="translated" rows="4" placeholder="Bou translated text will appear here" readonly>
             </textarea>
         </div>
     </div>
@@ -66,17 +66,6 @@ export default {
         }
     },
 
-    watch: {
-        translated() {
-            if (this.translated)
-                this.history.push({
-                    english: this.english,
-                    timestamp: new Date(),
-                    bou: this.translated
-                })
-        }
-    },
-
     methods: {
         isVowel(char, vowels) {
             return vowels.indexOf(char.toLowerCase()) > -1
@@ -89,9 +78,9 @@ export default {
         toAfrican(english) {
             return this.axios.get(`${this.url}=${this.apiKey}&q=${english}&target=afr`)
         },
-        toEnglish() {
-            return this.axios.get(`${this.url}=${this.apiKey}&q=${this.translated}&target=en`)
-        },
+        // toEnglish() {
+        //     return this.axios.get(`${this.url}=${this.apiKey}&q=${this.translated}&target=en`)
+        // },
 
         processWord(word, vowels) {
             // Step 3: Check that the word is even length
@@ -145,15 +134,24 @@ export default {
             this.translated = ""
             for (let word of list)
                 this.translated += word.toUpperCase() + " "
+
+
+            // Add the trnalsated text to the history
+            this.history.push({
+                english: this.english,
+                timestamp: new Date(),
+                bou: this.translated
+            })
         },
 
         translate(languageCode) {
             if (this.apiKey) {
                 if (languageCode == 'af' && this.english) {
                     this.forwards(this.english)
-                } else {
-                    this.toEnglish()
                 }
+                // else {
+                //     this.toEnglish()
+                // }
             }
         }
     },
